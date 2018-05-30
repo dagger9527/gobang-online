@@ -155,7 +155,7 @@ io.on('connection', function (socket) {
 
 })
 
-// 当玩家离开的时候
+// 当服务器关闭的时候
 io.on('close', function (socket) {
   console.log('服务器关闭')
 })
