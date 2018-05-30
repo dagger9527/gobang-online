@@ -78,7 +78,6 @@ function Game(play1, play2) {
   // 棋盘的格子数
   this.column = 21
   this.arr = init_arr() // 存储棋盘坐标的二位数组
-  this.flag = true
 
   // 一局棋局上的两个玩家
   this.play1 = play1
@@ -92,18 +91,12 @@ function Game(play1, play2) {
 
   // 监听数据
   this.play1.socket.on('data', function (data) {
-    if (self.flag) {
       add_pieces(self, self.arr, data, self.play1.color)
-      self.flag = !self.flag
-    }
   })
 
   // 监听棋盘数据
   this.play2.socket.on('data', function (data) {
-    if (!self.flag) {
       add_pieces(self, self.arr, data, self.play2.color)
-      self.flag = !self.flag
-    }
   })
 
 
@@ -334,7 +327,6 @@ function add_pieces(self, arr, position, color) {
   if (arr[position.x][position.y] === undefined) {
     arr[position.x][position.y] = color
     check_result(self, arr, position, color)
-    console.log('add_pieces')
   }
 }
 
