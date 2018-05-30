@@ -47,6 +47,11 @@ function Player(socket, name) {
   // 玩家开始匹配
   this.socket.on('play', function () {
     self.pipei = true
+    // 如果已经有人在开始匹配了，那么这个玩家就不需要走下面函数了，因为继续执行的话相当于再开一个棋局
+    if (findPlayer(self)) {
+      // 保持不动就好，房主会自动找到你的
+      return
+    }
     // 如果空闲玩家总数大于或等于2，那么开始游戏
     if (playerCount >= 2) {
       // 可用的玩家数
@@ -56,6 +61,7 @@ function Player(socket, name) {
         if (player2 = findPlayer(self)) {
           console.log('匹配成功')
           self.gamePlay = new Game(self, player2)
+          player2.gamePlay = self.gamePlay
           clearInterval(self.timer)
         }
       }, 1000)
@@ -70,7 +76,7 @@ function Player(socket, name) {
 
   // 监听数据
   this.socket.on('data', function (data) {
-    if (self.gamePlay.play1.flag) {
+    if (self.flag) {
       add_pieces(self.gamePlay, data, self.color)
     }
   })
@@ -91,9 +97,19 @@ function Game(play1, play2) {
   this.play1 = play1
   this.play2 = play2
 
+  // 修改游戏状态
+  this.play1.state = 1
+  this.play2.state = 1
+  // 在游戏中，是否匹配为false
+  this.play1.pipei = false
+  this.play2.pipei = false
+
   // 随机给两个玩家分配棋子颜色
   this.play1.color = ~~(Math.random() * 2) === 0 ? 'white' : 'black'
   this.play2.color = this.play1.color === 'white' ? 'black' : 'white'
+  // 谁是白棋谁先走
+  this.play1.flag = this.play1.color === 'white'? true: false
+  this.play2.flag = this.play1.color === 'white'? true: false
 
   var self = this
 
@@ -110,7 +126,7 @@ function Game(play1, play2) {
   //*/
 
   this.play1.socket.emit('play', {'name': this.play2.name, 'color': this.play1.color})
-  // this.play2.socket.emit('play', {'name': this.play1.name, 'color': this.play2.color})
+  this.play2.socket.emit('play', {'name': this.play1.name, 'color': this.play2.color})
 }
 
 // 监听连接
@@ -326,16 +342,15 @@ function check_result(self, arr, position, color) {
       }
     }
   }
+
   self.play1.socket.emit('addPieces', {'position': position, 'color': color})
   self.play2.socket.emit('addPieces', {'position': position, 'color': color})
 }
 
 // 添加棋子
 function add_pieces(self, position, color) {
-  console.log(self.arr[position.x][position.y])
   if (self.arr[position.x][position.y] === undefined) {
     self.arr[position.x][position.y] = color
-    console.log(self.arr[position.x][position.y])
     if (color === self.play1.color) {
       self.play1.flag = false
       self.play2.flag = true
