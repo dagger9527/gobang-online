@@ -53,7 +53,6 @@
       top: 50px;
     }
   </style>
-  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
   <script src="https://cdn.bootcss.com/less.js/3.0.4/less.js"></script>
 </head>
 
@@ -113,7 +112,6 @@
     context.arc(position.x * r + 15, position.y * r + 15, r / 2 - 2, 0, Math.PI * 2)
     context.closePath()
     context.fill()
-    console.log('agagag')
   }
 
   canvas.addEventListener('click', function (e) {
@@ -142,10 +140,17 @@
   var self = document.querySelector('#selfSleep')
   var other = document.querySelector('#otherSleep')
 
+  if (localStorage.getItem('color') === 'white') {
+    showSleep(false)
+  } else {
+    showSleep(true)
+  }
+
   function showSleep(flag) {
     self.hidden = flag
     other.hidden = !flag
   }
+
 </script>
 
 </html>

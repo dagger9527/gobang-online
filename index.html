@@ -86,33 +86,6 @@
 </body>
 </html>
 <script>
-  /*
-  var username = document.querySelector('#username')
-  var flag = document.querySelector('#flag')
-
-  var game = parent.document.querySelector('#game')
-
-  var socket = io('ws://localhost:3000')
-
-  function login() {
-    if (username.value === undefined || username.value === '') {
-      return
-    }
-    socket.emit('login', username.value)
-  }
-
-  socket.on('home', function (data) {
-    if (data.flag) {
-      flag.hidden = false
-    } else {
-      flag.hidden = true
-      localStorage.setItem('name', data.name)
-      localStorage.setItem('playerCount', data.playerCount)
-      // location.href = './home.html'
-      game.src = 'home.html'
-    }
-  })
-  //*/
   var username = document.getElementById('username')
   var flag = document.getElementById('flag')
 

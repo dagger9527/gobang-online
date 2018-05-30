@@ -36,7 +36,7 @@
       localStorage.setItem('name', data.name)
       localStorage.setItem('playerCount', data.playerCount)
       // location.href = './home.html'
-      game.src = './home.html'
+      game.src = 'home.html'
     }
   })
 
@@ -54,7 +54,7 @@
   socket.on('play', function (data) {
     localStorage.setItem('color', data.color)
     localStorage.setItem('player2', data.name)
-    game.src = './gobang-ui.html'
+    game.src = 'gobang-ui.html'
   })
 
   function clearPlay() {
@@ -77,6 +77,6 @@
   socket.on('result', function (data) {
     // game.contentWindow.result(data)
     alert(data)
-    game.src = './gobang-ui.html'
+    game.src = 'gobang-ui.html'
   })
 </script>

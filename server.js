@@ -203,14 +203,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -231,14 +227,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -259,14 +251,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -287,14 +275,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -315,14 +299,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -343,14 +323,10 @@ function check_result(self, arr, position, color) {
         white = 0
       }
       if (white === 5) {
-        self.play1.socket.emit('result', '白棋胜了')
-        self.play2.socket.emit('result', '白棋胜了')
-        self.arr = init_arr()
+        result(self, '白棋胜了')
         return
       } else if (black === 5) {
-        self.play1.socket.emit('result', '黑棋胜了')
-        self.play2.socket.emit('result', '黑棋胜了')
-        self.arr = init_arr()
+        result(self, '黑棋胜了')
         return
       }
     }
@@ -358,6 +334,14 @@ function check_result(self, arr, position, color) {
 
   self.play1.socket.emit('addPieces', {'position': position, 'color': color})
   self.play2.socket.emit('addPieces', {'position': position, 'color': color})
+}
+
+function result(self, str) {
+  self.play1.socket.emit('result', str)
+  self.play2.socket.emit('result', str)
+  self.play1.flag = self.play1.color === 'white'? true: false
+  self.play2.flag = self.play2.color === 'white'? true: false
+  self.arr = init_arr()
 }
 
 // 添加棋子
