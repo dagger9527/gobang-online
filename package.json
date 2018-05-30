@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "socket.io": "^2.1.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "online-gobang",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

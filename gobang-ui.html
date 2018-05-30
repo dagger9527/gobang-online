@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style type="text/less">
+    * {
+      margin: 0;
+    }
+
+    body {
+      background: #EEEEEE;
+    }
+
+    #canvas {
+      background-color: #E6E6E6;
+      margin-left: 300px;
+      margin-top: 50px;
+    }
+
+    .self, .other {
+      width: 150px;
+      height: 200px;
+      background-color: white;
+      position: absolute;
+      .top {
+        width: 70px;
+        height: 70px;
+        background: url("img/tou.jpg") no-repeat;
+        background-size: 100%;
+        border-radius: 50%;
+        margin: auto;
+        margin-top: 10%;
+      }
+      .name {
+        width: fit-content;
+        margin: auto;
+        margin-top: 10%;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: 宋体;
+      }
+    }
+
+    .self {
+      left: 50px;
+      top: 50px;
+    }
+
+    .other {
+      right: 50px;
+      top: 50px;
+    }
+  </style>
+  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+  <script src="https://cdn.bootcss.com/less.js/3.0.4/less.js"></script>
+</head>
+
+<body>
+<canvas id="canvas" width="630" height="630"></canvas>
+<div class="self">
+  <div class="top">
+  </div>
+  <div class="name">
+    <span>昵称:</span>
+    <span id="name"></span>
+  </div>
+  <div hidden id="selfSleep" style="font-family: 宋体; font-weight: bold; font-size: 14px;width: fit-content; margin: auto; margin-top: 15%; color: red;">
+    轮到你下了!
+  </div>
+</div>
+<div class="other">
+  <div class="top">
+  </div>
+  <div class="name">
+    <span>昵称:</span>
+    <span id="other"></span>
+  </div>
+  <div hidden id="otherSleep" style="font-family: 宋体; font-weight: bold; font-size: 14px;width: fit-content; margin: auto; margin-top: 15%; color: red;">
+    等待别人中...
+  </div>
+</div>
+</body>
+<script type="text/javascript">
+
+  var canvas = document.querySelector('#canvas')
+  var context = canvas.getContext('2d')
+
+  var r = 30
+  var edges = canvas.width
+  var offset_w = 315
+  var offset_h = 65
+
+  init_canvas()
+
+  function init_canvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.strokeStyle = '#444444'
+
+    for (var i = 15; i <= edges; i += r) {
+      context.moveTo(15, i)
+      context.lineTo(edges - 15, i)
+      context.moveTo(i, 15)
+      context.lineTo(i, edges - 15)
+    }
+    context.stroke()
+  }
+
+  function add_pieces(position, color) {
+    context.beginPath()
+    context.fillStyle = color
+    context.arc(position.x * r + 15, position.y * r + 15, r / 2 - 2, 0, Math.PI * 2)
+    context.closePath()
+    context.fill()
+    console.log('agagag')
+  }
+
+  canvas.addEventListener('click', function (e) {
+    var x, y
+    if ((e.clientX - offset_w) % 30 > 15) {
+      x = ~~((e.clientX - offset_w) / 30) + 1
+    } else {
+      x = ~~((e.clientX - offset_w) / 30)
+    }
+
+    if ((e.clientY - offset_h) % 30 > 15) {
+      y = ~~((e.clientY - offset_h) / 30) + 1
+    } else {
+      y = ~~((e.clientY - offset_h) / 30)
+    }
+    var position = {
+      x: x,
+      y: y
+    }
+    parent.add_pieces(position)
+  })
+
+  document.querySelector('#name').innerHTML = localStorage.getItem('name')
+  document.querySelector('#other').innerHTML = localStorage.getItem('player2')
+
+  var self = document.querySelector('#selfSleep')
+  var other = document.querySelector('#otherSleep')
+
+  function showSleep(flag) {
+    self.hidden = flag
+    other.hidden = !flag
+  }
+</script>
+
+</html>

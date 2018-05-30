@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style type="text/less">
+    * {
+      padding: 0;
+      margin: 0;
+      background-color: black;
+    }
+
+    input {
+      border: 1px solid black;
+    }
+
+    .container {
+      width: 400px;
+      height: 300px;
+      background-color: #f6f8f3;
+      border-radius: 25px;
+      margin: auto;
+      margin-top: 15%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-direction: column;
+      label, input, .username, .button, .title{
+        font-family: 宋体;
+        background-color: transparent;
+        font-size: 17px;
+        height: 30px;
+        &:hover {
+          cursor: pointer;
+        }
+        input {
+          &:hover {
+            border-color: red;
+          }
+        }
+      }
+      .title {
+        font-size: 40px;
+        color: #252bf4;
+        letter-spacing: 10px;
+        font-weight: bold;
+        margin-top: -20px;
+      }
+      .button {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+        div {
+          width: 100px;
+          height: 40px;
+          background-color: aquamarine;
+          line-height: 40px;
+          text-align: center;
+          border-radius: 10px;
+          &:hover {
+            background-color: aqua;
+          }
+        }
+      }
+    }
+  </style>
+  <script src="https://cdn.bootcss.com/less.js/3.0.4/less.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="title">
+    联机五子棋
+  </div>
+  <div class="username">
+    <label for="username">用户名:</label>
+    <input name="username" id="username" placeholder="请输入用户名">
+  </div>
+  <span id="flag" hidden style="color: red; font-size: 17px; background-color: inherit;">用户已存在</span>
+  <div class="button">
+    <div onclick="login()">开始游戏</div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+  /*
+  var username = document.querySelector('#username')
+  var flag = document.querySelector('#flag')
+
+  var game = parent.document.querySelector('#game')
+
+  var socket = io('ws://localhost:3000')
+
+  function login() {
+    if (username.value === undefined || username.value === '') {
+      return
+    }
+    socket.emit('login', username.value)
+  }
+
+  socket.on('home', function (data) {
+    if (data.flag) {
+      flag.hidden = false
+    } else {
+      flag.hidden = true
+      localStorage.setItem('name', data.name)
+      localStorage.setItem('playerCount', data.playerCount)
+      // location.href = './home.html'
+      game.src = 'home.html'
+    }
+  })
+  //*/
+  var username = document.getElementById('username')
+  var flag = document.getElementById('flag')
+
+  function login() {
+    if (username.value === undefined || username.value === '') {
+      return
+    }
+    parent.login(username.value)
+  }
+
+</script>

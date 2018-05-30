@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+  <style type="text/less">
+    * {
+      padding: 0;
+      margin: 0;
+      background-color: black;
+      font-family: 宋体;
+    }
+
+    figure {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      position: relative;
+      background: transparent;
+      z-index: 4;
+      margin: auto;
+      margin-top: 3%;
+    }
+
+    section {
+      background-color: inherit;
+      z-index: 4;
+      width: 10%;
+      height: 100%;
+      position: absolute;
+      left: 45%;
+    }
+
+    section:nth-child(2) {
+      transform: rotate(22.5deg);
+    }
+
+    section:nth-child(3) {
+      transform: rotate(45deg);
+    }
+
+    section:nth-child(4) {
+      transform: rotate(67.5deg);
+    }
+
+    section:nth-child(5) {
+      transform: rotate(90deg);
+    }
+
+    section:nth-child(6) {
+      transform: rotate(112.5deg);
+    }
+
+    section:nth-child(7) {
+      transform: rotate(135deg);
+    }
+
+    section:nth-child(8) {
+      transform: rotate(157.5deg);
+    }
+
+    figure div {
+      background-color: inherit;
+      height: 10%;
+      border-radius: 50%;
+      background: dodgerblue;
+      animation: move 1s ease-in-out infinite alternate;
+    }
+
+    figure > section:nth-child(1) > div {
+      animation-delay: -0.875s;
+    }
+
+    figure > section:nth-child(2) > div {
+      animation-delay: -0.75s;
+    }
+
+    figure > section:nth-child(3) > div {
+      animation-delay: -0.625s;
+    }
+
+    figure > section:nth-child(4) > div {
+      animation-delay: -0.5s;
+    }
+
+    figure > section:nth-child(5) > div {
+      animation-delay: -0.375s;
+    }
+
+    figure > section:nth-child(6) > div {
+      animation-delay: -0.25s;
+    }
+
+    figure > section:nth-child(7) > div {
+      animation-delay: -0.125s;
+    }
+
+    @keyframes move {
+      from {
+        transform: translate(0, 50%);
+      }
+      to {
+        transform: translate(0, 850%);
+      }
+    }
+
+    .loader {
+      width: 400px;
+      height: 300px;
+      background-color: rgba(230, 230, 230, 0.75);
+      position: absolute;
+      left: 37%;
+      top: 30%;
+      border-radius: 25px;
+      z-index: 3;
+    }
+
+    .container {
+      position: absolute;
+      width: 400px;
+      height: 300px;
+      background-color: #f6f8f3;
+      border-radius: 25px;
+      left: 37%;
+      top: 30%;
+      .title {
+        text-align: center;
+        width: 100%;
+        font-size: 40px;
+        color: #252bf4;
+        letter-spacing: 10px;
+        font-weight: bold;
+        background-color: inherit;
+        border-radius: 25px;
+        padding-top: 5%;
+      }
+      .button {
+        position: absolute;
+        background-color: inherit;
+        width: 100%;
+        bottom: 20px;
+        div {
+          border-radius: 10px;
+          margin: auto;
+          width: 100px;
+          height: 40px;
+          background-color: aquamarine;
+          line-height: 40px;
+          text-align: center;
+          &:hover {
+            background-color: aqua;
+            cursor: pointer;
+          }
+        }
+      }
+      .name {
+        background-color: inherit;
+        width: 100%;
+        text-align: center;
+        font-size: 25px;
+        font-weight: bold;
+        margin-top: 8%;
+        * {
+          background-color: inherit;
+        }
+        span:nth-child(1) {
+        }
+        #name {
+          color: red;
+        }
+        .count {
+
+        }
+      }
+    }
+
+  </style>
+  <script src="https://cdn.bootcss.com/less.js/3.0.4/less.min.js"></script>
+</head>
+<body>
+<!--<div id="layer" class="play">-->
+<div class="loader" id="loader" hidden>
+  <figure>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+    <section>
+      <div></div>
+    </section>
+  </figure>
+  <input onclick="clearPlay()" type="button" value="取消匹配" style="background-color: aquamarine; border: 0; width: 100px; height: 40px; border-radius: 10px; font-size: 17px; display: block; margin: auto; margin-top: 7%;">
+</div>
+<!--</div>-->
+<div class="container">
+  <div class="title">
+    联机五子棋
+  </div>
+  <div class="name">
+    <span>您的昵称:</span>
+    <span id="name">sdfds</span>
+    <br><br>
+    <span>在线人数:</span>
+    <span class="count" id="count"></span>
+  </div>
+  <span id="flag" style="width: fit-content;color: red; font-size: 17px; background-color: inherit;display: none;margin: auto;margin-top: 5%; cursor: pointer; z-index: 5;">当前在线人数太少了，请再等等吧...</span>
+  <div class="button">
+    <div onclick="play()">匹配</div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+  var username = document.querySelector('#name')
+  var count = document.querySelector('#count')
+  var loader = document.querySelector('#loader')
+  var flag = document.querySelector('#flag')
+
+  username.innerText = localStorage.getItem('name')
+  count.innerText = localStorage.getItem('playerCount') + '人'
+
+  function play() {
+    loader.hidden = false
+    flag.style.display = 'none'
+
+    parent.play()
+  }
+
+  function clearPlay() {
+    loader.hidden = true
+    parent.clearPlay()
+  }
+
+</script>
