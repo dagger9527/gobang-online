@@ -21,7 +21,7 @@ function Player(socket, name) {
   this.pipei = false  // 是否在匹配
   this.gamePlay = null // 棋局对象
   this.flag = true  // 是否轮到这个玩家出棋
-  // this.id = playerCount // 玩家在数组中的下标(之所以定义这个变量，是因为在玩家退出的时候，方便在数组中删除这个对象)
+  this.fz = false // 是否是房主
 
   playerCount++ // 没添加一个玩家，当前在线人数加1
 
@@ -42,19 +42,20 @@ function Player(socket, name) {
     }
 
     console.log(self.name + '已退出游戏')
-	clearInterval(self.timer)
   })
 
   // 玩家开始匹配
   this.socket.on('play', function () {
-    self.pipei = true
-    // 如果已经有人在开始匹配了，那么这个玩家就不需要走下面函数了，因为继续执行的话相当于再开一个棋局
-    if (findPlayer(self)) {
-      // 保持不动就好，房主会自动找到你的
-      return
-    }
     // 如果空闲玩家总数大于或等于2，那么开始游戏
     if (playerCount >= 2) {
+      self.pipei = true
+      // 如果已经有人在开始匹配了，那么这个玩家就不需要走下面函数了，因为继续执行的话相当于再开一个棋局
+      if (isExistFZ(self) > 0) {
+        // 保持不动就好，房主会自动找到你的
+        return
+      }
+      // 如果没有房主，那么这个玩家将成为房主
+      self.fz = true
       // 可用的玩家数
       var player2 = null
       self.timer = setInterval(function () {
@@ -73,7 +74,6 @@ function Player(socket, name) {
 
   this.socket.on('clearPlay', function () {
     clearInterval(self.timer)
-	self.pipei = false
   })
 
   // 监听数据
@@ -106,12 +106,15 @@ function Game(play1, play2) {
   this.play1.pipei = false
   this.play2.pipei = false
 
+  this.play1.fz = false
+  this.play1.fz = false
+
   // 随机给两个玩家分配棋子颜色
   this.play1.color = ~~(Math.random() * 2) === 0 ? 'white' : 'black'
   this.play2.color = this.play1.color === 'white' ? 'black' : 'white'
   // 谁是白棋谁先走
   this.play1.flag = this.play1.color === 'white'? true: false
-  this.play2.flag = this.play1.color === 'white'? true: false
+  this.play2.flag = this.play2.color === 'white'? true: false
 
   var self = this
 
@@ -157,18 +160,26 @@ io.on('close', function (socket) {
   console.log('服务器关闭')
 })
 
+// 是否有房主在匹配
+function isExistFZ(player1) {
+  // 过滤出所有的空闲玩家，并返回成一个数组
+  var availablePlayers = players.filter(function (val) {
+    // 玩家空闲状态，并已经在匹配
+    return val.state === 0 && val.pipei && player1 !== val && val.fz
+  })
+  return availablePlayers.length
+}
+
 // 返回一个可用的玩家
 function findPlayer(player1) {
   // 过滤出所有的空闲玩家，并返回成一个数组
   var availablePlayers = players.filter(function (val) {
     // 玩家空闲状态，并已经在匹配
-    return val.state === 0 && val.pipei && player1 !== val
+    return val.state === 0 && val.pipei && player1 !== val && !val.fz
   })
   if (availablePlayers.length > 0) {
     // 从空闲玩家中随机选取一个玩家
     var index = ~~(Math.random() * availablePlayers.length)
-    // 已被选取的玩家状态被重置为1
-    availablePlayers[index].state = 1
     // 将选中的玩家返回出去
     return availablePlayers[index]
   }
