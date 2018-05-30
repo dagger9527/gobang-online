@@ -8,8 +8,8 @@
     home.html 是用户大厅界面, 用来匹配等待的, 如果在线人数少于2人, 则匹配失败, 并会返回错误信息
 
 ## 首页
-![index][./img/index.png] 
+![index](./img/index.png) 
 ## 大厅页面 
-![index][./img/home.png] 
+![index](./img/home.png) 
 ## 游戏界面  
-![index][./img/game.png] 
+![index](./img/game.png) 
