@@ -3,13 +3,14 @@
   server.js是服务器文件 
   game.html是客户端的入口文件  
  
+    server.js socket服务器
     gobang-ui.html 是玩家下棋页面
     index.html 是用户登陆界面
     home.html 是用户大厅界面, 用来匹配等待的, 如果在线人数少于2人, 则匹配失败, 并会返回错误信息
 
-## 首页
+## 首页 [index.html]
 ![index](./img/index.png) 
-## 大厅页面 
+## 大厅页面 [home.html]
 ![index](./img/home.png) 
-## 游戏界面  
+## 游戏界面 [game.html]
 ![index](./img/game.png) 
