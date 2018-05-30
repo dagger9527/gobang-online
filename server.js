@@ -42,6 +42,7 @@ function Player(socket, name) {
     }
 
     console.log(self.name + '已退出游戏')
+	clearInterval(self.timer)
   })
 
   // 玩家开始匹配
@@ -72,6 +73,7 @@ function Player(socket, name) {
 
   this.socket.on('clearPlay', function () {
     clearInterval(self.timer)
+	self.pipei = false
   })
 
   // 监听数据
