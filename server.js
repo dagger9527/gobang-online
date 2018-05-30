@@ -1,8 +1,8 @@
 var server = require('http').createServer()
 var io = require('socket.io')(server)
 
-server.listen(3000, function() {
-	console.log('server starting...')
+server.listen(3000, function () {
+  console.log('server starting...')
 })
 
 // 玩家在线总数
@@ -18,7 +18,9 @@ function Player(socket, name) {
   this.name = name  // 玩家的名称
   this.color = null // 玩家棋子的颜色
   this.state = 0  // 0代表空闲, 1在游戏中
-  this.pipei = false
+  this.pipei = false  // 是否在匹配
+  this.gamePlay = null // 棋局对象
+  this.flag = true  // 是否轮到这个玩家出棋
   // this.id = playerCount // 玩家在数组中的下标(之所以定义这个变量，是因为在玩家退出的时候，方便在数组中删除这个对象)
 
   playerCount++ // 没添加一个玩家，当前在线人数加1
@@ -53,7 +55,7 @@ function Player(socket, name) {
         console.log('正在匹配...')
         if (player2 = findPlayer(self)) {
           console.log('匹配成功')
-          new Game(self, player2)
+          self.gamePlay = new Game(self, player2)
           clearInterval(self.timer)
         }
       }, 1000)
@@ -63,8 +65,14 @@ function Player(socket, name) {
   })
 
   this.socket.on('clearPlay', function () {
-    console.log('clear play')
     clearInterval(self.timer)
+  })
+
+  // 监听数据
+  this.socket.on('data', function (data) {
+    if (self.gamePlay.play1.flag) {
+      add_pieces(self.gamePlay, data, self.color)
+    }
   })
 
   players.push(this)
@@ -89,19 +97,20 @@ function Game(play1, play2) {
 
   var self = this
 
-  // 监听数据
-  this.play1.socket.on('data', function (data) {
-      add_pieces(self, self.arr, data, self.play1.color)
-  })
-
+  // 因为在这里对player1和player2玩家进行数据监听的话，那么不管是player1还是player2在客户端触发了的data事件，
+  // 这里的player1和player2的监听方法都会被调用，造成监听函数被重复执行两次的现象
+  /*
   // 监听棋盘数据
-  this.play2.socket.on('data', function (data) {
-      add_pieces(self, self.arr, data, self.play2.color)
+  this.play1.socket.on('data', function (data) {
+    add_pieces(self, self.arr, data, self.play1.color)
   })
+  this.play2.socket.on('data', function (data) {
+    add_pieces(self, self.arr, data, self.play2.color)
+  })
+  //*/
 
-
-  this.play1.socket.emit('play', {'name' :this.play2.name, 'color': this.play1.color})
-  this.play2.socket.emit('play', {'name': this.play1.name, 'color': this.play2.color})
+  this.play1.socket.emit('play', {'name': this.play2.name, 'color': this.play1.color})
+  // this.play2.socket.emit('play', {'name': this.play1.name, 'color': this.play2.color})
 }
 
 // 监听连接
@@ -116,7 +125,7 @@ io.on('connection', function (socket) {
     } else {
       console.log(name + '已登陆')
       // 创建玩家
-      var player = new Player(socket, name)
+      new Player(socket, name)
       // 将玩家放进数组中
       // players.push(player)
       socket.emit('home', {'playerCount': playerCount, 'name': name})
@@ -317,16 +326,24 @@ function check_result(self, arr, position, color) {
       }
     }
   }
-
   self.play1.socket.emit('addPieces', {'position': position, 'color': color})
   self.play2.socket.emit('addPieces', {'position': position, 'color': color})
 }
 
 // 添加棋子
-function add_pieces(self, arr, position, color) {
-  if (arr[position.x][position.y] === undefined) {
-    arr[position.x][position.y] = color
-    check_result(self, arr, position, color)
+function add_pieces(self, position, color) {
+  console.log(self.arr[position.x][position.y])
+  if (self.arr[position.x][position.y] === undefined) {
+    self.arr[position.x][position.y] = color
+    console.log(self.arr[position.x][position.y])
+    if (color === self.play1.color) {
+      self.play1.flag = false
+      self.play2.flag = true
+    } else if (color === self.play2.color) {
+      self.play1.flag = true
+      self.play2.flag = false
+    }
+    check_result(self, self.arr, position, color)
   }
 }
 
